@@ -9,7 +9,10 @@ import { POST as postExposure } from "@/app/api/commute/exposure/route";
 import { POST as postSimulate } from "@/app/api/simulator/simulate/route";
 import { POST as postCompare } from "@/app/api/simulator/compare/route";
 import { GET as getRooms, POST as postRoom } from "@/app/api/simulator/rooms/route";
-import { GET as getConversations } from "@/app/api/conversations/route";
+import { GET as getRoomById, PUT as putRoomById, DELETE as deleteRoomById } from "@/app/api/simulator/rooms/[id]/route";
+import { GET as getConversations, POST as postConversation } from "@/app/api/conversations/route";
+import { GET as getConversationById, PUT as putConversationById, DELETE as deleteConversationById } from "@/app/api/conversations/[id]/route";
+import { POST as postChat } from "@/app/api/chat/route";
 
 describe("SaansAI Production API Routes Integration Suite", () => {
   describe("GET /api/aqi/live", () => {
@@ -238,14 +241,137 @@ describe("SaansAI Production API Routes Integration Suite", () => {
     });
   });
 
-  describe("GET /api/conversations", () => {
-    it("returns 200 with user conversation session list", async () => {
-      const req = new NextRequest("http://localhost:3000/api/conversations?userId=user_api_test");
-      const res = await getConversations(req);
+  describe("GET & POST & DELETE /api/simulator/rooms/[id]", () => {
+    it("handles single room CRUD lifecycle", async () => {
+      // 1. Create a room first
+      const createReq = new NextRequest("http://localhost:3000/api/simulator/rooms", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: "user_crud_test",
+          room: {
+            name: "Study Room",
+            roomType: "office",
+            dimensions: { lengthM: 3, widthM: 3, heightM: 2.8 },
+            infiltrationLevel: "standard_indian_apartment",
+            ventilationMode: "closed_windows",
+            hasAirPurifier: true,
+            purifierCADR: 200,
+            purifierFanSpeed: "medium",
+            indoorSource: "none",
+            indoorSourceDurationMinutes: 0,
+            indoorSourceStartMinute: 0,
+          },
+        }),
+      });
+      const createRes = await postRoom(createReq);
+      assert.strictEqual(createRes.status, 200);
+      const createData = await createRes.json();
+      const roomId = createData.room.id;
 
-      assert.strictEqual(res.status, 200);
+      // 2. GET by ID
+      const getReq = new NextRequest(`http://localhost:3000/api/simulator/rooms/${roomId}?userId=user_crud_test`);
+      const getRes = await getRoomById(getReq, { params: Promise.resolve({ id: roomId }) });
+      assert.strictEqual(getRes.status, 200);
+      const getData = await getRes.json();
+      assert.strictEqual(getData.room.id, roomId);
+
+      // 3. PUT by ID
+      const putReq = new NextRequest(`http://localhost:3000/api/simulator/rooms/${roomId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: "user_crud_test",
+          room: { name: "Updated Study Room" },
+        }),
+      });
+      const putRes = await putRoomById(putReq, { params: Promise.resolve({ id: roomId }) });
+      assert.strictEqual(putRes.status, 200);
+
+      // 4. DELETE by ID
+      const delReq = new NextRequest(`http://localhost:3000/api/simulator/rooms/${roomId}?userId=user_crud_test`, {
+        method: "DELETE",
+      });
+      const delRes = await deleteRoomById(delReq, { params: Promise.resolve({ id: roomId }) });
+      assert.strictEqual(delRes.status, 200);
+    });
+  });
+
+  describe("Conversations API Suite", () => {
+    it("creates, retrieves, and clears conversation sessions", async () => {
+      // 1. POST create conversation
+      const postReq = new NextRequest("http://localhost:3000/api/conversations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: "user_conv_test",
+          title: "Winter Smog Defense Query",
+        }),
+      });
+      const postRes = await postConversation(postReq);
+      assert.strictEqual(postRes.status, 201);
+      const postData = await postRes.json();
+      const convId = postData.conversation.id;
+
+      // 2. GET by ID
+      const getReq = new NextRequest(`http://localhost:3000/api/conversations/${convId}?userId=user_conv_test`);
+      const getRes = await getConversationById(getReq, { params: Promise.resolve({ id: convId }) });
+      assert.strictEqual(getRes.status, 200);
+
+      // 3. PUT clear messages
+      const putReq = new NextRequest(`http://localhost:3000/api/conversations/${convId}?userId=user_conv_test`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: "user_conv_test" }),
+      });
+      const putRes = await putConversationById(putReq, { params: Promise.resolve({ id: convId }) });
+      assert.strictEqual(putRes.status, 200);
+
+      // 4. DELETE conversation
+      const delReq = new NextRequest(`http://localhost:3000/api/conversations/${convId}?userId=user_conv_test`, {
+        method: "DELETE",
+      });
+      const delRes = await deleteConversationById(delReq, { params: Promise.resolve({ id: convId }) });
+      assert.strictEqual(delRes.status, 200);
+
+      // 5. GET all user conversations
+      const listReq = new NextRequest("http://localhost:3000/api/conversations?userId=user_conv_test");
+      const listRes = await getConversations(listReq);
+      assert.strictEqual(listRes.status, 200);
+      const listData = await listRes.json();
+      assert.ok(Array.isArray(listData.conversations));
+    });
+  });
+
+  describe("POST /api/chat", () => {
+    it("returns 400 when chat request payload is empty or invalid", async () => {
+      const req = new NextRequest("http://localhost:3000/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}),
+      });
+
+      const res = await postChat(req);
+      assert.strictEqual(res.status, 400);
       const data = await res.json();
-      assert.ok(Array.isArray(data.conversations));
+      assert.strictEqual(data.error, "INVALID_CHAT_REQUEST");
+    });
+
+    it("returns 200 SSE stream for a valid conversational query", async () => {
+      const req = new NextRequest("http://localhost:3000/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: "What is the current AQI in Delhi?",
+          userId: "user_chat_test",
+          scenario: "delhi-anand-vihar",
+        }),
+      });
+
+      const res = await postChat(req);
+      assert.strictEqual(res.status, 200);
+      assert.ok(res.headers.get("content-type")?.includes("text/event-stream"));
+      assert.ok(res.body);
     });
   });
 });

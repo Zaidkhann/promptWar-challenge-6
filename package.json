@@ -7,6 +7,8 @@
     "build": "next build",
     "start": "next start",
     "test": "node --conditions=react-server --import tsx --test 'tests/**/*.test.ts'",
+    "test:coverage": "node --conditions=react-server --experimental-test-coverage --import tsx --test 'tests/**/*.test.ts'",
+    "typecheck": "tsc --noEmit",
     "lint": "eslint"
   },
   "dependencies": {

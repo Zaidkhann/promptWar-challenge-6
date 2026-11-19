@@ -89,7 +89,16 @@ export function middleware(request: NextRequest) {
     );
   }
 
-  // 2. Handle Preflight OPTIONS Request
+  // 2. Request body size / DoS guard for API routes (max 1MB payload)
+  const contentLength = request.headers.get("content-length");
+  if (contentLength && parseInt(contentLength, 10) > 1048576) {
+    return new NextResponse(
+      JSON.stringify({ error: "PAYLOAD_TOO_LARGE", message: "Request payload exceeds 1MB threshold." }),
+      { status: 413, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  }
+
+  // 3. Handle Preflight OPTIONS Request
   if (request.method === "OPTIONS") {
     return new NextResponse(null, {
       status: 204,
@@ -97,7 +106,7 @@ export function middleware(request: NextRequest) {
     });
   }
 
-  // 3. Sliding-window Rate Limiting for API routes
+  // 4. Sliding-window Rate Limiting for API routes
   if (urlPath.startsWith("/api/")) {
     const ip =
       request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||

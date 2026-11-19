@@ -145,5 +145,18 @@ describe("SaansAI CORS & Cross-Origin API Client Suite", () => {
 
       assert.strictEqual(response.status, 400);
     });
+
+    it("blocks oversized payloads exceeding 1MB threshold with 413 Payload Too Large", () => {
+      const request = new NextRequest("https://promptwar-challenge-6.onrender.com/api/chat", {
+        method: "POST",
+        headers: {
+          "content-length": "2097152", // 2MB
+        },
+      });
+
+      const response = middleware(request);
+
+      assert.strictEqual(response.status, 413);
+    });
   });
 });
