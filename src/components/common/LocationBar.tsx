@@ -205,18 +205,20 @@ export function LocationBar({
           </Button>
 
           {/* Quick Search Form */}
-          <form onSubmit={handleSearchCity} className="relative flex items-center">
+          <form onSubmit={handleSearchCity} className="relative flex items-center" role="search" aria-label="City search form">
             <input
+              id="location-search-input"
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search any city..."
+              aria-label="Search city or location"
               className="h-8 w-36 sm:w-48 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-2.5 text-xs text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500"
             />
             <button
               type="submit"
               disabled={isSearching || !searchQuery.trim()}
-              aria-label="Search city"
+              aria-label="Submit search for city"
               className="absolute right-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
             >
               {isSearching ? (
@@ -236,7 +238,11 @@ export function LocationBar({
       )}
 
       {/* Quick Pick Popular Cities Row */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pt-1 border-t border-slate-100 dark:border-slate-800 text-[11px]">
+      <div
+        role="toolbar"
+        aria-label="Quick-pick Indian metropolitan cities"
+        className="flex items-center gap-1.5 overflow-x-auto pt-1 border-t border-slate-100 dark:border-slate-800 text-[11px]"
+      >
         <span className="text-slate-400 dark:text-slate-500 text-[10px] font-semibold shrink-0 uppercase tracking-wider mr-1">
           Quick Pick:
         </span>

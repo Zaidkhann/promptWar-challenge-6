@@ -122,6 +122,28 @@ describe("SaansAI CORS & Cross-Origin API Client Suite", () => {
       );
       assert.strictEqual(response.headers.get("access-control-allow-credentials"), "true");
       assert.ok(response.headers.get("access-control-allow-methods")?.includes("GET"));
+      assert.strictEqual(response.headers.get("x-ratelimit-limit"), "120");
+      assert.ok(response.headers.has("x-ratelimit-remaining"));
+    });
+
+    it("blocks malicious path traversal sequences with 400 Bad Request", () => {
+      const request = new NextRequest("https://promptwar-challenge-6.onrender.com/api/chat?file=../../etc/passwd", {
+        method: "GET",
+      });
+
+      const response = middleware(request);
+
+      assert.strictEqual(response.status, 400);
+    });
+
+    it("blocks null-byte injection attacks with 400 Bad Request", () => {
+      const request = new NextRequest("https://promptwar-challenge-6.onrender.com/api/chat?scenario=%00evil", {
+        method: "GET",
+      });
+
+      const response = middleware(request);
+
+      assert.strictEqual(response.status, 400);
     });
   });
 });

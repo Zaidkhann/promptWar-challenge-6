@@ -142,27 +142,31 @@ export function RoutePlanner({
         {/* Origin and Destination Inputs */}
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-              <MapPin className="h-3.5 w-3.5 text-cyan-600 dark:text-cyan-400" />
+            <label htmlFor="commute-origin-input" className="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+              <MapPin className="h-3.5 w-3.5 text-cyan-600 dark:text-cyan-400" aria-hidden="true" />
               <span>Origin Location / Station</span>
             </label>
             <Input
+              id="commute-origin-input"
               value={origin}
               onChange={(e) => setOrigin(e.target.value)}
               placeholder="e.g. Anand Vihar, Delhi"
+              aria-label="Origin Location or Station"
               className="bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100"
             />
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-              <MapPin className="h-3.5 w-3.5 text-rose-600 dark:text-rose-400" />
+            <label htmlFor="commute-destination-input" className="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+              <MapPin className="h-3.5 w-3.5 text-rose-600 dark:text-rose-400" aria-hidden="true" />
               <span>Destination Location</span>
             </label>
             <Input
+              id="commute-destination-input"
               value={destination}
               onChange={(e) => setDestination(e.target.value)}
               placeholder="e.g. Connaught Place, New Delhi"
+              aria-label="Destination Location"
               className="bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100"
             />
           </div>
@@ -171,23 +175,29 @@ export function RoutePlanner({
         {/* Departure Hour Slider & Diurnal Boundary Layer Context */}
         <div className="space-y-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/60 p-3.5">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
-            <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-800 dark:text-slate-200">
-              <Clock className="h-4 w-4 text-cyan-700 dark:text-cyan-400" />
+            <label htmlFor="departure-hour-slider" className="flex items-center gap-1.5 text-xs font-semibold text-slate-800 dark:text-slate-200">
+              <Clock className="h-4 w-4 text-cyan-700 dark:text-cyan-400" aria-hidden="true" />
               <span>Departure Time: {String(departureHour).padStart(2, "0")}:00 IST</span>
-            </div>
+            </label>
             <div className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-0.5 rounded-full border ${hourCtx.color}`}>
-              <HourIcon className="h-3 w-3" />
+              <HourIcon className="h-3 w-3" aria-hidden="true" />
               <span>{hourCtx.label}</span>
             </div>
           </div>
 
           <input
+            id="departure-hour-slider"
             type="range"
             min="0"
             max="23"
             value={departureHour}
             onChange={(e) => setDepartureHour(Number(e.target.value))}
-            className="w-full accent-cyan-600 dark:accent-cyan-400 cursor-pointer"
+            aria-label="Departure hour selector"
+            aria-valuenow={departureHour}
+            aria-valuemin={0}
+            aria-valuemax={23}
+            aria-valuetext={`${String(departureHour).padStart(2, "0")}:00 Indian Standard Time`}
+            className="w-full accent-cyan-600 dark:accent-cyan-400 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
           />
 
           <div className="flex justify-between text-[10px] text-slate-400 dark:text-slate-500 font-mono">
@@ -203,13 +213,15 @@ export function RoutePlanner({
         <div className="grid gap-4 sm:grid-cols-2">
           {/* Optimization Goal */}
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-              <Target className="h-3.5 w-3.5 text-cyan-600 dark:text-cyan-400" />
+            <label htmlFor="commute-objective-select" className="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+              <Target className="h-3.5 w-3.5 text-cyan-600 dark:text-cyan-400" aria-hidden="true" />
               <span>Optimization Objective</span>
             </label>
             <select
+              id="commute-objective-select"
               value={objective}
               onChange={(e) => setObjective(e.target.value as OptimizationObjective)}
+              aria-label="Select commute optimization objective"
               className="flex h-10 w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-600"
             >
               <option value="lowest_exposure">Lowest Inhaled Particulate Burden (Safest for Lungs)</option>
@@ -221,13 +233,15 @@ export function RoutePlanner({
 
           {/* Mask Selection */}
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-              <Shield className="h-3.5 w-3.5 text-cyan-600 dark:text-cyan-400" />
+            <label htmlFor="commute-mask-select" className="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+              <Shield className="h-3.5 w-3.5 text-cyan-600 dark:text-cyan-400" aria-hidden="true" />
               <span>Personal Mask Protection (η)</span>
             </label>
             <select
+              id="commute-mask-select"
               value={maskType}
               onChange={(e) => setMaskType(e.target.value as MaskType)}
+              aria-label="Select personal mask protection tier"
               className="flex h-10 w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-600"
             >
               <option value="NONE">No Mask (0% filtration, full airway exposure)</option>

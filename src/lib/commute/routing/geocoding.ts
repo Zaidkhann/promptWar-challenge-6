@@ -127,7 +127,7 @@ export async function geocodeLocation(query: string): Promise<GeocodingResult | 
   // 2. Query OpenStreetMap Nominatim with strict timeout
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 3500);
+    const timeout = setTimeout(() => controller.abort(), 1800);
 
     const endpoint = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
       query

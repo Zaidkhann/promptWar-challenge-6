@@ -21,9 +21,23 @@ const nextConfig: NextConfig = {
     return [];
   },
 
-  // Defense-in-depth CORS headers for all API routes
+  // Security & CORS headers
   async headers() {
     return [
+      // 1. Global Security Headers for all routes
+      {
+        source: "/:path*",
+        headers: [
+          { key: "X-DNS-Prefetch-Control", value: "on" },
+          { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
+          { key: "X-Frame-Options", value: "DENY" },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(self)" },
+          { key: "X-XSS-Protection", value: "1; mode=block" },
+        ],
+      },
+      // 2. Defense-in-depth CORS headers for all API routes
       {
         source: "/api/:path*",
         headers: [

@@ -274,8 +274,10 @@ export function IndoorSanctuaryView({ initialScenarioKey = "delhi-anand-vihar" }
         {/* Outdoor Conditions Indicator */}
         <div className="flex items-center gap-2">
           <div className="text-right">
-            <div className="text-[10px] uppercase font-bold text-slate-400">Outdoor Baseline</div>
+            <label htmlFor="outdoor-baseline-select" className="block text-[10px] uppercase font-bold text-slate-400">Outdoor Baseline</label>
             <select
+              id="outdoor-baseline-select"
+              aria-label="Outdoor air quality baseline scenario"
               value={outdoor.scenarioName || "live"}
               onChange={(e) => {
                 const sc = e.target.value;
@@ -484,14 +486,16 @@ export function IndoorSanctuaryView({ initialScenarioKey = "delhi-anand-vihar" }
                 {/* Length, Width, Height */}
                 <div className="grid grid-cols-3 gap-2">
                   <div>
-                    <label className="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1">
+                    <label htmlFor="room-length-input" className="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1">
                       Length (m)
                     </label>
                     <input
+                      id="room-length-input"
                       type="number"
                       step="0.1"
                       min="1.5"
                       max="20"
+                      aria-label="Room length in meters"
                       value={room.dimensions.lengthM}
                       onChange={(e) =>
                         setRoom({
@@ -503,14 +507,16 @@ export function IndoorSanctuaryView({ initialScenarioKey = "delhi-anand-vihar" }
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1">
+                    <label htmlFor="room-width-input" className="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1">
                       Width (m)
                     </label>
                     <input
+                      id="room-width-input"
                       type="number"
                       step="0.1"
                       min="1.5"
                       max="20"
+                      aria-label="Room width in meters"
                       value={room.dimensions.widthM}
                       onChange={(e) =>
                         setRoom({
@@ -522,14 +528,16 @@ export function IndoorSanctuaryView({ initialScenarioKey = "delhi-anand-vihar" }
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1">
+                    <label htmlFor="room-height-input" className="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1">
                       Height (m)
                     </label>
                     <input
+                      id="room-height-input"
                       type="number"
                       step="0.1"
                       min="2.0"
                       max="6.0"
+                      aria-label="Room height in meters"
                       value={room.dimensions.heightM}
                       onChange={(e) =>
                         setRoom({
@@ -550,10 +558,12 @@ export function IndoorSanctuaryView({ initialScenarioKey = "delhi-anand-vihar" }
 
                 {/* Building Infiltration Level */}
                 <div>
-                  <label className="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1">
+                  <label htmlFor="room-infiltration-select" className="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1">
                     Building Envelope Infiltration
                   </label>
                   <select
+                    id="room-infiltration-select"
+                    aria-label="Building Envelope Infiltration Level"
                     value={room.infiltrationLevel}
                     onChange={(e) =>
                       setRoom({ ...room, infiltrationLevel: e.target.value as InfiltrationLevel })
@@ -568,11 +578,13 @@ export function IndoorSanctuaryView({ initialScenarioKey = "delhi-anand-vihar" }
 
                 {/* Window & Ventilation Mode */}
                 <div>
-                  <label className="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1 flex items-center justify-between">
+                  <label htmlFor="room-ventilation-select" className="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1 flex items-center justify-between">
                     <span>Window & Ventilation State</span>
-                    <Wind className="h-3 w-3 text-cyan-600 dark:text-cyan-400" />
+                    <Wind className="h-3 w-3 text-cyan-600 dark:text-cyan-400" aria-hidden="true" />
                   </label>
                   <select
+                    id="room-ventilation-select"
+                    aria-label="Window and ventilation state"
                     value={room.ventilationMode}
                     onChange={(e) =>
                       setRoom({ ...room, ventilationMode: e.target.value as VentilationMode })
@@ -600,6 +612,7 @@ export function IndoorSanctuaryView({ initialScenarioKey = "delhi-anand-vihar" }
                     type="checkbox"
                     checked={room.hasAirPurifier}
                     onChange={(e) => setRoom({ ...room, hasAirPurifier: e.target.checked })}
+                    aria-label="Enable HEPA air purifier"
                     className="h-4 w-4 text-cyan-600 rounded border-slate-300 dark:border-slate-700 focus:ring-cyan-500"
                   />
                 </CardTitle>
@@ -612,16 +625,21 @@ export function IndoorSanctuaryView({ initialScenarioKey = "delhi-anand-vihar" }
                   <>
                     <div>
                       <div className="flex justify-between text-[11px] mb-1">
-                        <span className="font-semibold text-slate-600 dark:text-slate-300">Certified CADR (Clean Air Volume)</span>
+                        <label htmlFor="purifier-cadr-slider" className="font-semibold text-slate-600 dark:text-slate-300">Certified CADR (Clean Air Volume)</label>
                         <span className="font-mono font-bold text-cyan-700 dark:text-cyan-400">{room.purifierCADR} m³/h</span>
                       </div>
                       <input
+                        id="purifier-cadr-slider"
                         type="range"
                         min="100"
                         max="800"
                         step="20"
                         value={room.purifierCADR}
                         onChange={(e) => setRoom({ ...room, purifierCADR: parseInt(e.target.value) || 100 })}
+                        aria-label="Certified CADR Clean Air Delivery Rate"
+                        aria-valuenow={room.purifierCADR}
+                        aria-valuemin={100}
+                        aria-valuemax={800}
                         className="w-full accent-cyan-600 cursor-pointer"
                       />
                       <div className="flex justify-between text-[9px] text-slate-400 font-mono">
@@ -632,14 +650,16 @@ export function IndoorSanctuaryView({ initialScenarioKey = "delhi-anand-vihar" }
                     </div>
 
                     <div>
-                      <label className="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1">
+                      <span className="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1">
                         Operating Fan Speed
-                      </label>
-                      <div className="grid grid-cols-4 gap-1.5">
+                      </span>
+                      <div className="grid grid-cols-4 gap-1.5" role="radiogroup" aria-label="Operating fan speed">
                         {(["low", "medium", "high", "turbo"] as PurifierFanSpeed[]).map((spd) => (
                           <button
                             key={spd}
                             type="button"
+                            role="radio"
+                            aria-checked={room.purifierFanSpeed === spd}
                             onClick={() => setRoom({ ...room, purifierFanSpeed: spd })}
                             className={`py-1 text-[11px] rounded capitalize font-medium transition-colors ${
                               room.purifierFanSpeed === spd
@@ -673,7 +693,7 @@ export function IndoorSanctuaryView({ initialScenarioKey = "delhi-anand-vihar" }
               <CardHeader className="pb-3">
                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between">
                   <span>Step 3 · Internal Emission Sources</span>
-                  <Flame className="h-3.5 w-3.5 text-orange-500" />
+                  <Flame className="h-3.5 w-3.5 text-orange-500" aria-hidden="true" />
                 </span>
                 <CardTitle className="text-base">Household Emission Scenarios</CardTitle>
                 <CardDescription className="text-xs">
@@ -682,7 +702,10 @@ export function IndoorSanctuaryView({ initialScenarioKey = "delhi-anand-vihar" }
               </CardHeader>
               <CardContent className="space-y-3 text-xs">
                 <div>
+                  <label htmlFor="indoor-source-select" className="sr-only">Indoor emission source</label>
                   <select
+                    id="indoor-source-select"
+                    aria-label="Household emission source scenario"
                     value={room.indoorSource}
                     onChange={(e) => setRoom({ ...room, indoorSource: e.target.value as IndoorSourceType })}
                     className="w-full px-2.5 py-1.5 border border-slate-200 dark:border-slate-800 dark:bg-[#0B1220] dark:text-slate-100 rounded text-xs bg-white focus:ring-1 focus:ring-cyan-500"
@@ -699,10 +722,12 @@ export function IndoorSanctuaryView({ initialScenarioKey = "delhi-anand-vihar" }
                 {room.indoorSource !== "none" && (
                   <div className="grid grid-cols-2 gap-2 pt-1 border-t border-slate-100 dark:border-slate-800">
                     <div>
-                      <label className="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1">
+                      <label htmlFor="emission-duration-select" className="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1">
                         Emission Duration
                       </label>
                       <select
+                        id="emission-duration-select"
+                        aria-label="Emission duration in minutes"
                         value={room.indoorSourceDurationMinutes}
                         onChange={(e) =>
                           setRoom({ ...room, indoorSourceDurationMinutes: parseInt(e.target.value) || 30 })
@@ -716,14 +741,16 @@ export function IndoorSanctuaryView({ initialScenarioKey = "delhi-anand-vihar" }
                       </select>
                     </div>
                     <div>
-                      <label className="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1">
+                      <label htmlFor="emission-start-minute-input" className="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1">
                         Start At Minute
                       </label>
                       <input
+                        id="emission-start-minute-input"
                         type="number"
                         min="0"
                         max="240"
                         step="5"
+                        aria-label="Emission start minute"
                         value={room.indoorSourceStartMinute}
                         onChange={(e) =>
                           setRoom({ ...room, indoorSourceStartMinute: parseInt(e.target.value) || 0 })
@@ -821,8 +848,10 @@ export function IndoorSanctuaryView({ initialScenarioKey = "delhi-anand-vihar" }
                     Indoor Particulate Decay & Concentration Curve
                   </CardTitle>
                   <div className="flex items-center gap-1 text-[11px] text-slate-500 dark:text-slate-400">
-                    <span>Duration:</span>
+                    <label htmlFor="sim-duration-select">Duration:</label>
                     <select
+                      id="sim-duration-select"
+                      aria-label="Simulation duration hours"
                       value={durationHours}
                       onChange={(e) => {
                         const dur = parseInt(e.target.value) || 4;
@@ -895,7 +924,10 @@ export function IndoorSanctuaryView({ initialScenarioKey = "delhi-anand-vihar" }
                   </CardDescription>
                 </div>
                 <div className="flex items-center gap-2">
+                  <label htmlFor="preset-comparison-select" className="sr-only">Preset scenario comparison</label>
                   <select
+                    id="preset-comparison-select"
+                    aria-label="Preset scenario comparison selection"
                     value={selectedPreset}
                     onChange={(e) => {
                       setSelectedPreset(e.target.value);

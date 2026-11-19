@@ -63,9 +63,11 @@ export async function resolveCommuteRoute(
     }
   }
 
-  // 2. Geocode origin and destination
-  const originGeo = await geocodeLocation(originQuery);
-  const destGeo = await geocodeLocation(destinationQuery);
+  // 2. Geocode origin and destination concurrently
+  const [originGeo, destGeo] = await Promise.all([
+    geocodeLocation(originQuery),
+    geocodeLocation(destinationQuery),
+  ]);
 
   if (!originGeo || !destGeo) {
     // Fallback to default Delhi Anand Vihar -> CP corridor if completely unrecognizable
