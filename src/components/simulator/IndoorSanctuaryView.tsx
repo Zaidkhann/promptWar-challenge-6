@@ -21,6 +21,7 @@ import { IndoorHacksPanel } from "./IndoorHacksPanel";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { apiUrl } from "@/lib/api-client";
 import {
   RoomConfiguration,
   OutdoorConditions,
@@ -76,7 +77,7 @@ export function IndoorSanctuaryView({ initialScenarioKey = "delhi-anand-vihar" }
   // Load Saved Rooms on Mount
   const loadSavedRooms = useCallback(async () => {
     try {
-      const res = await fetch("/api/simulator/rooms?userId=user_default");
+      const res = await fetch(apiUrl("/api/simulator/rooms?userId=user_default"));
       if (res.ok) {
         const data = await res.json();
         if (data.rooms) setSavedRooms(data.rooms);
@@ -91,7 +92,7 @@ export function IndoorSanctuaryView({ initialScenarioKey = "delhi-anand-vihar" }
     async (targetRoom = room, targetOutdoor = outdoor, dur = durationHours) => {
       setIsSimulating(true);
       try {
-        const res = await fetch("/api/simulator/simulate", {
+        const res = await fetch(apiUrl("/api/simulator/simulate"), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -120,7 +121,7 @@ export function IndoorSanctuaryView({ initialScenarioKey = "delhi-anand-vihar" }
     async (presetKey = selectedPreset) => {
       setIsComparing(true);
       try {
-        const res = await fetch("/api/simulator/compare", {
+        const res = await fetch(apiUrl("/api/simulator/compare"), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -152,7 +153,7 @@ export function IndoorSanctuaryView({ initialScenarioKey = "delhi-anand-vihar" }
     // Fetch live local outdoor air quality dynamically
     const fetchLiveOutdoor = async () => {
       try {
-        const res = await fetch("/api/aqi/live");
+        const res = await fetch(apiUrl("/api/aqi/live"));
         if (res.ok) {
           const liveReport = await res.json();
           const pm25 = liveReport.pollutants?.["PM2.5"]?.value;
@@ -226,7 +227,7 @@ export function IndoorSanctuaryView({ initialScenarioKey = "delhi-anand-vihar" }
   // Save Room Configuration
   const handleSaveRoom = async () => {
     try {
-      const res = await fetch("/api/simulator/rooms", {
+      const res = await fetch(apiUrl("/api/simulator/rooms"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId: "user_default", room }),

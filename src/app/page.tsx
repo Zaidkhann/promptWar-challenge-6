@@ -9,7 +9,6 @@ import {
   Activity,
   ArrowRight,
   Scale,
-  Sparkles,
 } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -21,7 +20,7 @@ export default function HomePage() {
       <section className="relative overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-6 sm:p-10 shadow-2xs dark:border-slate-800 dark:bg-[#111827] transition-colors">
         <div className="max-w-3xl space-y-5">
           <div className="inline-flex items-center gap-2 rounded-full border border-cyan-200 bg-cyan-50 px-3 py-1 text-xs font-semibold text-cyan-800 dark:border-cyan-800/80 dark:bg-cyan-950/60 dark:text-cyan-300">
-            <Sparkles className="h-3.5 w-3.5 text-cyan-600 dark:text-cyan-400" aria-hidden="true" />
+            <ShieldCheck className="h-3.5 w-3.5 text-cyan-600 dark:text-cyan-400" aria-hidden="true" />
             <span>Google Developers Prompt War Challenge 6</span>
           </div>
 

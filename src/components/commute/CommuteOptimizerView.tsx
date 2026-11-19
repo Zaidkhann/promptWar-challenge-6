@@ -22,6 +22,7 @@ import { CarbonVsExposureChart } from "./CarbonVsExposureChart";
 import { SegmentExposureProfile } from "./SegmentExposureProfile";
 import { ActionImpactBanner } from "./ActionImpactBanner";
 import { Badge } from "@/components/ui/badge";
+import { apiUrl } from "@/lib/api-client";
 
 interface CommuteOptimizerViewProps {
   initialMatrix: MatrixType;
@@ -62,7 +63,7 @@ export function CommuteOptimizerView({
       setIsLoading(true);
       setErrorMsg(null);
       try {
-        const res = await fetch("/api/commute/exposure", {
+        const res = await fetch(apiUrl("/api/commute/exposure"), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

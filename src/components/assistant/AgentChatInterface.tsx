@@ -17,6 +17,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MarkdownMessage } from "./MarkdownMessage";
+import { apiUrl } from "@/lib/api-client";
 
 export interface ToolCallUI {
   tool: string;
@@ -66,7 +67,7 @@ export function AgentChatInterface({
     setCurrentConversationId(convId);
     setSidebarOpen(false);
     try {
-      const res = await fetch(`/api/conversations/${convId}?userId=${encodeURIComponent(userId)}`);
+      const res = await fetch(apiUrl(`/api/conversations/${convId}?userId=${encodeURIComponent(userId)}`));
       if (res.ok) {
         const data = await res.json();
         const conv = data.conversation;
@@ -99,7 +100,7 @@ export function AgentChatInterface({
 
   const loadConversations = useCallback(async () => {
     try {
-      const res = await fetch(`/api/conversations?userId=${encodeURIComponent(userId)}`);
+      const res = await fetch(apiUrl(`/api/conversations?userId=${encodeURIComponent(userId)}`));
       if (res.ok) {
         const data = await res.json();
         setConversations(data.conversations || []);
@@ -134,7 +135,7 @@ export function AgentChatInterface({
   const handleDeleteConversation = async (convId: string, e: React.MouseEvent) => {
     e.stopPropagation();
     try {
-      const res = await fetch(`/api/conversations/${convId}?userId=${encodeURIComponent(userId)}`, {
+      const res = await fetch(apiUrl(`/api/conversations/${convId}?userId=${encodeURIComponent(userId)}`), {
         method: "DELETE",
       });
       if (res.ok) {
@@ -178,7 +179,7 @@ export function AgentChatInterface({
     const executedToolsList: ToolCallUI[] = [];
 
     try {
-      const res = await fetch("/api/chat", {
+      const res = await fetch(apiUrl("/api/chat"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

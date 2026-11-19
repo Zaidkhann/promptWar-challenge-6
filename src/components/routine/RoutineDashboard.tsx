@@ -22,6 +22,7 @@ import { LocationBar } from "@/components/common/LocationBar";
 import { RoutineTimeline } from "./RoutineTimeline";
 import { RecommendationCard } from "./RecommendationCard";
 import { RoutinePreferencesForm } from "./RoutinePreferencesForm";
+import { apiUrl } from "@/lib/api-client";
 
 interface RoutineDashboardProps {
   initialResult: RoutineEvaluationResult;
@@ -58,7 +59,7 @@ export function RoutineDashboard({
         ? `/api/aqi/live?scenario=${encodeURIComponent(scenarioKey)}`
         : `/api/aqi/live?lat=${report.station.latitude}&lon=${report.station.longitude}`;
 
-      const res = await fetch(url);
+      const res = await fetch(apiUrl(url));
       if (res.ok) {
         const freshReport: NormalizedAirQualityReport = await res.json();
         setReport(freshReport);
