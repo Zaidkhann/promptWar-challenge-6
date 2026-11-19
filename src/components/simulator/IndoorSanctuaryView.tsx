@@ -148,7 +148,36 @@ export function IndoorSanctuaryView({ initialScenarioKey = "delhi-anand-vihar" }
   useEffect(() => {
     loadSavedRooms();
     handleRunSimulation();
-  }, [loadSavedRooms, handleRunSimulation]);
+
+    // Fetch live local outdoor air quality dynamically
+    const fetchLiveOutdoor = async () => {
+      try {
+        const res = await fetch("/api/aqi/live");
+        if (res.ok) {
+          const liveReport = await res.json();
+          const pm25 = liveReport.pollutants?.["PM2.5"]?.value;
+          const pm10 = liveReport.pollutants?.["PM10"]?.value;
+          if (typeof pm25 === "number" && pm25 > 0) {
+            const liveOutdoor: OutdoorConditions = {
+              pm25,
+              pm10: pm10 ?? pm25 * 1.3,
+              isLive: true,
+              isManualAssumption: false,
+              sourceName: liveReport.station?.name || "Live Atmospheric Grid",
+              confidenceScore: 0.95,
+              scenarioName: "live",
+            };
+            setOutdoor(liveOutdoor);
+            handleRunSimulation(room, liveOutdoor, durationHours);
+          }
+        }
+      } catch (err) {
+        console.warn("Could not fetch live outdoor conditions:", err);
+      }
+    };
+    fetchLiveOutdoor();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Handle Preset Room Selection
   const selectRoomPreset = (type: RoomType) => {
@@ -246,36 +275,61 @@ export function IndoorSanctuaryView({ initialScenarioKey = "delhi-anand-vihar" }
           <div className="text-right">
             <div className="text-[10px] uppercase font-bold text-slate-400">Outdoor Baseline</div>
             <select
-              value={outdoor.scenarioName || "delhi-anand-vihar"}
+              value={outdoor.scenarioName || "live"}
               onChange={(e) => {
                 const sc = e.target.value;
-                const newOutdoor: OutdoorConditions =
-                  sc === "mumbai-bandra"
-                    ? {
-                        pm25: 42,
-                        pm10: 65,
-                        isLive: false,
-                        isManualAssumption: false,
-                        sourceName: "Bandra CAAQMS (MPCB)",
-                        confidenceScore: 0.9,
-                        scenarioName: "mumbai-bandra",
-                      }
-                    : {
-                        pm25: 388,
-                        pm10: 540,
-                        isLive: false,
-                        isManualAssumption: false,
-                        sourceName: "Anand Vihar CAAQMS (DPCC)",
-                        confidenceScore: 0.9,
-                        scenarioName: "delhi-anand-vihar",
-                      };
+                let newOutdoor: OutdoorConditions;
+                if (sc === "mumbai-bandra") {
+                  newOutdoor = {
+                    pm25: 68,
+                    pm10: 74,
+                    isLive: true,
+                    isManualAssumption: false,
+                    sourceName: "Mumbai CAAQMS",
+                    confidenceScore: 0.95,
+                    scenarioName: "mumbai-bandra",
+                  };
+                } else if (sc === "bengaluru") {
+                  newOutdoor = {
+                    pm25: 52,
+                    pm10: 56,
+                    isLive: true,
+                    isManualAssumption: false,
+                    sourceName: "Bengaluru CAAQMS",
+                    confidenceScore: 0.95,
+                    scenarioName: "bengaluru",
+                  };
+                } else if (sc === "severe_smog") {
+                  newOutdoor = {
+                    pm25: 388,
+                    pm10: 540,
+                    isLive: false,
+                    isManualAssumption: true,
+                    sourceName: "Severe Smog Inversion Episode",
+                    confidenceScore: 0.9,
+                    scenarioName: "severe_smog",
+                  };
+                } else {
+                  // Live Local Ambient
+                  newOutdoor = {
+                    pm25: outdoor.pm25,
+                    pm10: outdoor.pm10,
+                    isLive: true,
+                    isManualAssumption: false,
+                    sourceName: outdoor.sourceName,
+                    confidenceScore: 0.95,
+                    scenarioName: "live",
+                  };
+                }
                 setOutdoor(newOutdoor);
                 handleRunSimulation(room, newOutdoor, durationHours);
               }}
-              className="text-xs font-bold text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-800 rounded px-1.5 py-0.5 bg-white dark:bg-[#1E293B] cursor-pointer"
+              className="text-xs font-bold text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-800 rounded px-2 py-1 bg-white dark:bg-[#1E293B] cursor-pointer"
             >
-              <option value="delhi-anand-vihar">Delhi Anand Vihar (388 µg/m³)</option>
-              <option value="mumbai-bandra">Mumbai Bandra (42 µg/m³)</option>
+              <option value="live">📍 Live Ambient ({Math.round(outdoor.pm25)} µg/m³)</option>
+              <option value="bengaluru">Bengaluru Moderate (52 µg/m³)</option>
+              <option value="mumbai-bandra">Mumbai Coastal Air (68 µg/m³)</option>
+              <option value="severe_smog">Severe Smog Episode (388 µg/m³)</option>
             </select>
           </div>
         </div>

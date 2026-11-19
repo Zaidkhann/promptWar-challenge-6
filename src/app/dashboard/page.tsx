@@ -12,6 +12,7 @@ import {
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { DashboardViewToggle, DashboardStationViewItem } from "@/components/dashboard/DashboardViewToggle";
+import { LocationBar } from "@/components/common/LocationBar";
 import { getAirQualityReport } from "@/lib/aqi/service";
 import { getNearbyCPCBStations } from "@/lib/aqi/providers/cpcb";
 import { getAQICategory } from "@/lib/aqi/cpcb-calculator";
@@ -19,11 +20,13 @@ import { getAQICategory } from "@/lib/aqi/cpcb-calculator";
 export default async function DashboardPage({
   searchParams,
 }: {
-  searchParams: Promise<{ scenario?: string; lat?: string; lon?: string; mode?: string }>;
+  searchParams: Promise<{ scenario?: string; lat?: string; lon?: string; city?: string }>;
 }) {
   const resolvedParams = await searchParams;
-  const isLive = resolvedParams?.scenario === "live" || resolvedParams?.mode === "live";
-  const scenarioKey = isLive ? undefined : (resolvedParams?.scenario || "delhi-anand-vihar");
+  // Default to live real-time pipeline unless an explicit scenario override is provided
+  const scenarioKey = (resolvedParams?.scenario && resolvedParams.scenario !== "live")
+    ? resolvedParams.scenario
+    : undefined;
 
   const report = await getAirQualityReport({
     lat: resolvedParams?.lat ? parseFloat(resolvedParams.lat) : undefined,
@@ -93,6 +96,12 @@ export default async function DashboardPage({
           </div>
         </div>
       </div>
+
+      {/* Dynamic Location Selector & GPS Detection */}
+      <LocationBar
+        currentStationName={report.station.name}
+        currentCity={resolvedParams?.city || report.station.city}
+      />
 
       {/* Hero Telemetry Section: CPCB NAQI vs. Instantaneous HISI */}
       <div className="grid gap-6 md:grid-cols-12">

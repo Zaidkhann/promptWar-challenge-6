@@ -1,10 +1,107 @@
 import "server-only";
-import { AtmosphericWeather } from "../types";
+import { AtmosphericWeather, RawPollutantReading } from "../types";
 
 function degreesToCardinal(deg: number): string {
   const directions = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"];
   const index = Math.round(deg / 22.5) % 16;
   return directions[index] || "N";
+}
+
+/**
+ * Ingests live criteria pollutant measurements from Open-Meteo Air Quality Reanalysis API.
+ * Provides high-accuracy real-time PM2.5, PM10, CO, NO2, SO2, O3 for ANY latitude/longitude coordinate.
+ */
+export async function fetchOpenMeteoAirQuality(
+  latitude: number,
+  longitude: number
+): Promise<RawPollutantReading[] | null> {
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 4500);
+
+    const aqiUrl = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${latitude}&longitude=${longitude}&current=pm10,pm2_5,carbon_monoxide,nitrogen_dioxide,sulphur_dioxide,ozone`;
+    const res = await fetch(aqiUrl, { signal: controller.signal, next: { revalidate: 900 } });
+    clearTimeout(timeoutId);
+
+    if (!res.ok) {
+      return null;
+    }
+
+    const json = await res.json();
+    const current = json.current;
+    if (!current) {
+      return null;
+    }
+
+    const timestamp = current.time ? new Date(current.time).toISOString() : new Date().toISOString();
+    const readings: RawPollutantReading[] = [];
+
+    if (typeof current.pm2_5 === "number" && current.pm2_5 >= 0) {
+      readings.push({
+        pollutant: "PM2.5",
+        value: Number(current.pm2_5.toFixed(1)),
+        unit: "µg/m³",
+        timestamp,
+        averagingHours: 24,
+      });
+    }
+
+    if (typeof current.pm10 === "number" && current.pm10 >= 0) {
+      readings.push({
+        pollutant: "PM10",
+        value: Number(current.pm10.toFixed(1)),
+        unit: "µg/m³",
+        timestamp,
+        averagingHours: 24,
+      });
+    }
+
+    if (typeof current.carbon_monoxide === "number" && current.carbon_monoxide >= 0) {
+      // Open-Meteo returns CO in µg/m³. CPCB NAQI standard is mg/m³. Convert by dividing by 1000.
+      readings.push({
+        pollutant: "CO",
+        value: Number((current.carbon_monoxide / 1000).toFixed(2)),
+        unit: "mg/m³",
+        timestamp,
+        averagingHours: 8,
+      });
+    }
+
+    if (typeof current.nitrogen_dioxide === "number" && current.nitrogen_dioxide >= 0) {
+      readings.push({
+        pollutant: "NO2",
+        value: Number(current.nitrogen_dioxide.toFixed(1)),
+        unit: "µg/m³",
+        timestamp,
+        averagingHours: 24,
+      });
+    }
+
+    if (typeof current.sulphur_dioxide === "number" && current.sulphur_dioxide >= 0) {
+      readings.push({
+        pollutant: "SO2",
+        value: Number(current.sulphur_dioxide.toFixed(1)),
+        unit: "µg/m³",
+        timestamp,
+        averagingHours: 24,
+      });
+    }
+
+    if (typeof current.ozone === "number" && current.ozone >= 0) {
+      readings.push({
+        pollutant: "O3",
+        value: Number(current.ozone.toFixed(1)),
+        unit: "µg/m³",
+        timestamp,
+        averagingHours: 8,
+      });
+    }
+
+    return readings.length >= 2 ? readings : null;
+  } catch (error) {
+    console.warn("[Open-Meteo Air Quality Provider] Error fetching pollutants:", error);
+    return null;
+  }
 }
 
 /**

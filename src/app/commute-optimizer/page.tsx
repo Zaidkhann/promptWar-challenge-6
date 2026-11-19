@@ -4,23 +4,31 @@ import { sampleRouteSpatialExposureAsync } from "@/lib/commute/spatial-exposure"
 import { compareCommuteAlternatives } from "@/lib/commute/comparator";
 import { generateCommuteActionAdvisories } from "@/lib/commute/recommendations";
 import { CommuteOptimizerView } from "@/components/commute/CommuteOptimizerView";
+import { getAirQualityReport } from "@/lib/aqi/service";
 
 export default async function CommuteOptimizerPage({
   searchParams,
 }: {
-  searchParams: Promise<{ scenario?: string }>;
+  searchParams: Promise<{ scenario?: string; origin?: string; destination?: string }>;
 }) {
   const resolved = await searchParams;
-  const scenarioKey = resolved?.scenario || "delhi-anand-vihar";
+  const scenarioKey = resolved?.scenario;
 
-  const isMumbai = scenarioKey === "mumbai-bandra";
-  const defaultOrigin = isMumbai ? "Bandra West, Mumbai" : "Anand Vihar, Delhi";
-  const defaultDestination = isMumbai ? "Nariman Point, Mumbai" : "Connaught Place, New Delhi";
-  const ambientPM25 = isMumbai ? 42 : 388;
+  const defaultOrigin = resolved?.origin || "Connaught Place, New Delhi";
+  const defaultDestination = resolved?.destination || "Cyber City, Gurugram";
 
-  // Compute server-side baseline with real OpenAQ v3 observations
+  // Resolve road network
   const resolvedRoute = await resolveCommuteRoute(defaultOrigin, defaultDestination);
-  const spatialProfile = await sampleRouteSpatialExposureAsync(resolvedRoute.route, ambientPM25, 8);
+
+  // Fetch real-time live air quality at the route origin coordinates
+  const originReport = await getAirQualityReport({
+    lat: resolvedRoute.route.origin.lat,
+    lon: resolvedRoute.route.origin.lon,
+    scenario: scenarioKey,
+  });
+  const liveAmbientPM25 = originReport.pollutants["PM2.5"]?.value ?? 99;
+
+  const spatialProfile = await sampleRouteSpatialExposureAsync(resolvedRoute.route, liveAmbientPM25, 8);
   const initialMatrix = compareCommuteAlternatives({
     route: resolvedRoute.route,
     spatialProfile,

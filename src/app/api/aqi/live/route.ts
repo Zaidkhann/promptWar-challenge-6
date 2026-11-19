@@ -6,8 +6,8 @@ export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
     const rawQuery = {
-      lat: searchParams.get("lat"),
-      lon: searchParams.get("lon"),
+      lat: searchParams.get("lat") || searchParams.get("latitude"),
+      lon: searchParams.get("lon") || searchParams.get("longitude"),
       stationId: searchParams.get("stationId") ?? undefined,
       scenario: searchParams.get("scenario") ?? undefined,
     };

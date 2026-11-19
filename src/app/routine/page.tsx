@@ -6,11 +6,12 @@ import { RoutineDashboard } from "@/components/routine/RoutineDashboard";
 export default async function RoutinePage({
   searchParams,
 }: {
-  searchParams: Promise<{ scenario?: string; lat?: string; lon?: string; mode?: string }>;
+  searchParams: Promise<{ scenario?: string; lat?: string; lon?: string; city?: string }>;
 }) {
   const resolvedParams = await searchParams;
-  const isLive = resolvedParams?.scenario === "live" || resolvedParams?.mode === "live";
-  const scenarioKey = isLive ? undefined : (resolvedParams?.scenario || "delhi-anand-vihar");
+  const scenarioKey = (resolvedParams?.scenario && resolvedParams.scenario !== "live")
+    ? resolvedParams.scenario
+    : undefined;
 
   const report = await getAirQualityReport({
     lat: resolvedParams?.lat ? parseFloat(resolvedParams.lat) : undefined,

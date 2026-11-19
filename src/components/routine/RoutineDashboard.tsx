@@ -18,6 +18,7 @@ import { NormalizedAirQualityReport } from "@/lib/aqi/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { LocationBar } from "@/components/common/LocationBar";
 import { RoutineTimeline } from "./RoutineTimeline";
 import { RecommendationCard } from "./RecommendationCard";
 import { RoutinePreferencesForm } from "./RoutinePreferencesForm";
@@ -147,6 +148,12 @@ export function RoutineDashboard({
           </Button>
         </div>
       </div>
+
+      {/* Dynamic Location Selector & GPS Detection */}
+      <LocationBar
+        currentStationName={report.station.name}
+        currentCity={report.station.city}
+      />
 
       {/* Stale / Expired / Insufficient Data Warning Banner */}
       {result.status !== "SUCCESS" && (

@@ -16,6 +16,7 @@ export type DataProvenanceType =
   | "OPENAQ_V3"
   | "SPATIAL_INTERPOLATION"
   | "HISTORICAL_BASELINE"
+  | "LIVE_REANALYSIS"
   | "DEMO_SCENARIO";
 
 export interface RawPollutantReading {

@@ -14,7 +14,6 @@ import {
   X,
   ShieldCheck,
 } from "lucide-react";
-import { DemoBanner } from "@/components/common/DemoBanner";
 import { SkipLink } from "@/components/common/SkipLink";
 import { ThemeSwitcher } from "@/components/theme/ThemeSwitcher";
 
@@ -89,9 +88,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen flex flex-col bg-[#F8FAFC] text-slate-900 dark:bg-[#0B1220] dark:text-slate-100 transition-colors duration-200">
       <SkipLink target="#main-content" />
-
-      {/* Evaluation Demonstration Scenario Banner */}
-      <DemoBanner />
 
       {/* Main Sticky Header */}
       <header className="sticky top-0 z-40 border-b border-slate-200/90 bg-white/95 backdrop-blur-md dark:border-slate-800 dark:bg-[#111827]/95 transition-colors">

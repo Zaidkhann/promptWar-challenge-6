@@ -12,7 +12,6 @@ import {
   Sparkles,
 } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 export default function HomePage() {
@@ -38,18 +37,18 @@ export default function HomePage() {
 
           {/* Quick Action CTAs */}
           <div className="flex flex-wrap items-center gap-3 pt-2">
-            <Link href="/dashboard?scenario=delhi-anand-vihar">
-              <Button size="md" className="gap-2">
+            <Link href="/dashboard">
+              <Button size="md" className="gap-2 bg-cyan-600 hover:bg-cyan-700 text-white font-medium">
                 <LayoutDashboard className="h-4 w-4" aria-hidden="true" />
-                <span>Open AQI Command Center</span>
+                <span>Check Live AQI at My Location</span>
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </Button>
             </Link>
 
-            <Link href="/commute-optimizer?scenario=delhi-anand-vihar">
+            <Link href="/routine">
               <Button variant="outline" size="md" className="gap-2">
-                <Navigation className="h-4 w-4 text-cyan-600 dark:text-cyan-400" aria-hidden="true" />
-                <span>Action Impact Comparison</span>
+                <CalendarClock className="h-4 w-4 text-cyan-600 dark:text-cyan-400" aria-hidden="true" />
+                <span>Personalize Daily Smog Routine</span>
               </Button>
             </Link>
           </div>
@@ -72,95 +71,46 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Evaluation Demonstration Scenarios */}
-      <section aria-labelledby="scenarios-heading" className="space-y-4">
-        <div>
-          <h2 id="scenarios-heading" className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100">
-            Evaluation Demonstration Scenarios
-          </h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            Toggle between calibrated environmental scenarios to test system responsiveness across extreme and moderate conditions.
-          </p>
+      {/* Live Location-Based Intelligence */}
+      <section aria-labelledby="live-location-heading" className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-[#111827] p-6 space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h2 id="live-location-heading" className="text-base font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+              Dynamic Hyperlocal Air Intelligence
+            </h2>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              Real-time CPCB telemetry, OpenAQ v3 observations, and Open-Meteo reanalysis conditioned dynamically on your live coordinates.
+            </p>
+          </div>
+          <Link href="/dashboard">
+            <Button size="sm" className="bg-cyan-600 hover:bg-cyan-700 text-white text-xs">
+              Detect My Location
+            </Button>
+          </Link>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2">
-          {/* Scenario 1: Delhi Severe Smog */}
-          <Card className="border-red-200/80 bg-red-50/20 dark:border-red-900/40 dark:bg-red-950/10">
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <Badge variant="severe">Severe Smog (AQI 482)</Badge>
-                <Badge variant="demo">Preset 1</Badge>
-              </div>
-              <CardTitle className="text-base mt-2">Anand Vihar, New Delhi</CardTitle>
-              <CardDescription>
-                Severe winter temperature inversion trapping stubble smoke and traffic emissions below 180 meters.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="grid grid-cols-3 gap-2 text-center text-xs">
-                <div className="rounded-lg border border-red-200 bg-white p-2 dark:border-red-900/50 dark:bg-slate-900">
-                  <span className="block text-slate-500 dark:text-slate-400 text-[10px]">PM2.5</span>
-                  <span className="text-sm font-bold text-red-700 dark:text-red-400">388 µg/m³</span>
-                  <span className="text-[9px] text-red-600 dark:text-red-400 block">6.4x CPCB Std</span>
-                </div>
-                <div className="rounded-lg border border-red-200 bg-white p-2 dark:border-red-900/50 dark:bg-slate-900">
-                  <span className="block text-slate-500 dark:text-slate-400 text-[10px]">Inversion</span>
-                  <span className="text-sm font-bold text-red-700 dark:text-red-400">Active</span>
-                  <span className="text-[9px] text-red-600 dark:text-red-400 block">Ceiling: 180m</span>
-                </div>
-                <div className="rounded-lg border border-red-200 bg-white p-2 dark:border-red-900/50 dark:bg-slate-900">
-                  <span className="block text-slate-500 dark:text-slate-400 text-[10px]">HISI Indicator</span>
-                  <span className="text-sm font-bold text-red-700 dark:text-red-400">495</span>
-                  <span className="text-[9px] text-red-600 dark:text-red-400 block">Acute Surge</span>
-                </div>
-              </div>
-              <Link href="/dashboard?scenario=delhi-anand-vihar" className="block pt-1">
-                <Button variant="outline" size="sm" className="w-full justify-between text-xs">
-                  <span>Explore Delhi Severe Scenario</span>
-                  <ArrowRight className="h-3.5 w-3.5" />
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
-
-          {/* Scenario 2: Mumbai Moderate */}
-          <Card className="border-amber-200/80 bg-amber-50/20 dark:border-amber-900/40 dark:bg-amber-950/10">
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <Badge variant="moderate">Moderate Air (AQI 154)</Badge>
-                <Badge variant="demo">Preset 2</Badge>
-              </div>
-              <CardTitle className="text-base mt-2">Bandra Kurla Complex, Mumbai</CardTitle>
-              <CardDescription>
-                Coastal marine breeze maintaining boundary layer at 850 meters with moderate traffic dust.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="grid grid-cols-3 gap-2 text-center text-xs">
-                <div className="rounded-lg border border-amber-200 bg-white p-2 dark:border-amber-900/50 dark:bg-slate-900">
-                  <span className="block text-slate-500 dark:text-slate-400 text-[10px]">PM10</span>
-                  <span className="text-sm font-bold text-amber-800 dark:text-amber-400">136 µg/m³</span>
-                  <span className="text-[9px] text-amber-700 dark:text-amber-400 block">Dominant</span>
-                </div>
-                <div className="rounded-lg border border-amber-200 bg-white p-2 dark:border-amber-900/50 dark:bg-slate-900">
-                  <span className="block text-slate-500 dark:text-slate-400 text-[10px]">Inversion</span>
-                  <span className="text-sm font-bold text-emerald-700 dark:text-emerald-400">None</span>
-                  <span className="text-[9px] text-emerald-600 dark:text-emerald-400 block">Ceiling: 850m</span>
-                </div>
-                <div className="rounded-lg border border-amber-200 bg-white p-2 dark:border-amber-900/50 dark:bg-slate-900">
-                  <span className="block text-slate-500 dark:text-slate-400 text-[10px]">HISI Indicator</span>
-                  <span className="text-sm font-bold text-amber-800 dark:text-amber-400">162</span>
-                  <span className="text-[9px] text-amber-700 dark:text-amber-400 block">Stable Flow</span>
-                </div>
-              </div>
-              <Link href="/dashboard?scenario=mumbai-bandra" className="block pt-1">
-                <Button variant="outline" size="sm" className="w-full justify-between text-xs">
-                  <span>Explore Mumbai Moderate Scenario</span>
-                  <ArrowRight className="h-3.5 w-3.5" />
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+          <Link href="/dashboard?lat=28.6139&lon=77.2090&city=Delhi+NCR" className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 p-3 hover:border-cyan-500 transition-all">
+            <div className="text-[10px] text-slate-400 font-semibold uppercase">Northern Indo-Gangetic</div>
+            <div className="text-sm font-bold text-slate-900 dark:text-slate-100 mt-0.5">Delhi NCR</div>
+            <div className="text-[11px] text-cyan-600 dark:text-cyan-400 mt-1">View Live Station →</div>
+          </Link>
+          <Link href="/dashboard?lat=19.0760&lon=72.8777&city=Mumbai" className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 p-3 hover:border-cyan-500 transition-all">
+            <div className="text-[10px] text-slate-400 font-semibold uppercase">Western Coastal</div>
+            <div className="text-sm font-bold text-slate-900 dark:text-slate-100 mt-0.5">Mumbai</div>
+            <div className="text-[11px] text-cyan-600 dark:text-cyan-400 mt-1">View Live Station →</div>
+          </Link>
+          <Link href="/dashboard?lat=12.9716&lon=77.5946&city=Bengaluru" className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 p-3 hover:border-cyan-500 transition-all">
+            <div className="text-[10px] text-slate-400 font-semibold uppercase">Deccan Plateau</div>
+            <div className="text-sm font-bold text-slate-900 dark:text-slate-100 mt-0.5">Bengaluru</div>
+            <div className="text-[11px] text-cyan-600 dark:text-cyan-400 mt-1">View Live Station →</div>
+          </Link>
+          <Link href="/dashboard?lat=22.5726&lon=88.3639&city=Kolkata" className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 p-3 hover:border-cyan-500 transition-all">
+            <div className="text-[10px] text-slate-400 font-semibold uppercase">Eastern Delta</div>
+            <div className="text-sm font-bold text-slate-900 dark:text-slate-100 mt-0.5">Kolkata</div>
+            <div className="text-[11px] text-cyan-600 dark:text-cyan-400 mt-1">View Live Station →</div>
+          </Link>
         </div>
       </section>
 
