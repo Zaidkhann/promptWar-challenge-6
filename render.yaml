@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: saansai
+    env: node
+    plan: free
+    region: oregon
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: NODE_VERSION
+        value: 20.18.0
+      - key: GEMINI_MODEL
+        value: gemini-2.5-flash
+      - key: GEMINI_FALLBACK_MODEL
+        value: gemini-2.5-flash
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: OPENAQ_API_KEY
+        sync: false
