@@ -1,5 +1,11 @@
 import React, { Suspense } from "react";
+import type { Metadata } from "next";
 import { AgentChatInterface } from "@/components/assistant/AgentChatInterface";
+
+export const metadata: Metadata = {
+  title: "Autonomous GenAI Environmental Copilot | SaansAI",
+  description: "Autonomous 15-tool Google Gemini agent delivering strictly grounded air quality insights with zero hallucinations.",
+};
 
 export default async function AssistantPage({
   searchParams,

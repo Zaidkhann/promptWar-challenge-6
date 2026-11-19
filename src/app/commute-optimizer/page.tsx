@@ -1,10 +1,16 @@
 import React, { Suspense } from "react";
+import type { Metadata } from "next";
 import { resolveCommuteRoute } from "@/lib/commute/routing/service";
 import { sampleRouteSpatialExposureAsync } from "@/lib/commute/spatial-exposure";
 import { compareCommuteAlternatives } from "@/lib/commute/comparator";
 import { generateCommuteActionAdvisories } from "@/lib/commute/recommendations";
 import { CommuteOptimizerView } from "@/components/commute/CommuteOptimizerView";
 import { getAirQualityReport } from "@/lib/aqi/service";
+
+export const metadata: Metadata = {
+  title: "Smart Commute Optimizer & Respiratory Exposure Dosimetry | SaansAI",
+  description: "ICRP 66 human respiratory tract deposition modeling comparing inhaled particulate mass and carbon across 6 transit modes.",
+};
 
 export default async function CommuteOptimizerPage({
   searchParams,

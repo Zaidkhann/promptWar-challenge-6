@@ -1,7 +1,13 @@
 import React, { Suspense } from "react";
+import type { Metadata } from "next";
 import { getAirQualityReport } from "@/lib/aqi/service";
 import { evaluateRoutineRecommendations, DEFAULT_USER_PREFERENCES } from "@/lib/recommendations";
 import { RoutineDashboard } from "@/components/routine/RoutineDashboard";
+
+export const metadata: Metadata = {
+  title: "Personalized Daily Smog Routine & Diurnal Timeline | SaansAI",
+  description: "Diurnal atmospheric boundary layer modeling, safe activity windows, and cohort-specific lifestyle recommendations.",
+};
 
 export default async function RoutinePage({
   searchParams,

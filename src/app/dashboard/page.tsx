@@ -1,4 +1,5 @@
 import React from "react";
+import type { Metadata } from "next";
 import {
   Thermometer,
   Droplets,
@@ -16,6 +17,11 @@ import { LocationBar } from "@/components/common/LocationBar";
 import { getAirQualityReport } from "@/lib/aqi/service";
 import { getNearbyCPCBStations } from "@/lib/aqi/providers/cpcb";
 import { getAQICategory } from "@/lib/aqi/cpcb-calculator";
+
+export const metadata: Metadata = {
+  title: "Live Air Quality Command Center | SaansAI",
+  description: "Real-time statutory CPCB NAQI, 8 criteria pollutants, and planetary boundary layer inversion telemetry.",
+};
 
 export default async function DashboardPage({
   searchParams,

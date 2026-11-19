@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import {
   LayoutDashboard,
   CalendarClock,
@@ -12,6 +13,11 @@ import {
 } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+
+export const metadata: Metadata = {
+  title: "SaansAI — Urban Air Quality Companion & Environmental Intelligence",
+  description: "GenAI-powered environmental assistant helping families navigate severe winter smog with low-emission routines, indoor air solutions, and sustainable alternatives.",
+};
 
 export default function HomePage() {
   return (

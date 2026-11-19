@@ -1,5 +1,11 @@
 import React, { Suspense } from "react";
+import type { Metadata } from "next";
 import { IndoorSanctuaryView } from "@/components/simulator/IndoorSanctuaryView";
+
+export const metadata: Metadata = {
+  title: "Indoor Sanctuary Simulator & Physical ODE Lab | SaansAI",
+  description: "Analytical mass-balance physics modeling aerosol decay, HEPA CADR filtration, and Indian cooking emission bursts.",
+};
 
 interface PageProps {
   searchParams: Promise<{ scenario?: string; room?: string }>;
